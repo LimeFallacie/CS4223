@@ -1,0 +1,13 @@
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-p', '--protocol', choices=['MESI', 'Dragon'])
+
+parser.add_argument('-i', 'input', choices=['blackscholes', 'bodytrack', 'fluidanimate'])
+
+parser.add_argument('-c', 'cache')
+
+parser.add_argument('-a', 'associativity')
+
+parser.add_argument('-b', 'block')
+
