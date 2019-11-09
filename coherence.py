@@ -23,7 +23,6 @@ def main():
         assoc = sys.argv[4]
         blockSize = sys.argv[5]
 
-
     print("============CONFIG============\n")
     # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
     print("protocol = %s" % protocol)
@@ -58,7 +57,6 @@ def main():
     print("bus data traffic in bytes = %s" % "PLACEHOLDER")
     print("number of invalidation or update in bus = %s" % "PLACEHOLDER")
     print("private data versus shared data access distribution = %s%%" % "PLACEHOLDER")
-
 
 
 if __name__ == '__main__':
