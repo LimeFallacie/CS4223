@@ -17,7 +17,7 @@ def main():
     assoc = ASSOCIATIVITY
     blockSize = BLOCK_SIZE
 
-    if not len(sys.argv == 3):
+    if len(sys.argv) == 3:
         cacheSize = sys.argv[3]
         assoc = sys.argv[4]
         blockSize = sys.argv[5]
@@ -30,6 +30,27 @@ def main():
     print("cache size = %s" % cacheSize)
     print("assoc = %s" % assoc)
     print("block size = %s" % blockSize)
+
+    cores = []
+    for i in range(1, 5):
+        # TODO cores initialisation
+        cores.append("core")
+
+    print("\n\n\n")
+    print("============Results============\n")
+    # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
+    print("overall cycle count = %s" % "PLACEHOLDER")
+    for i in range(1, 5):
+        print("======== core %s ========" % i)
+        print("cycle count for core %d = %s" % (i, "PLACEHOLDER"))
+        print("load/store instruction count for core %d = %s" % (i, "PLACEHOLDER"))
+        print("idle cycle count for core %d = %s" % (i, "PLACEHOLDER"))
+        print("data cache miss rate for core %d = %s%%" % (i, "PLACEHOLDER"))
+    print("========================")
+    print("bus data traffic in bytes = %s" % "PLACEHOLDER")
+    print("number of invalidation or update in bus = %s" % "PLACEHOLDER")
+    print("private data versus shared data access distribution = %s%%" % "PLACEHOLDER")
+
 
 
 if __name__ == '__main__':
