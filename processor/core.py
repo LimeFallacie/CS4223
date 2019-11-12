@@ -30,6 +30,8 @@ class Core:
                 # TODO: fill in PrWr case
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
+                self.stallCount = int(command[2:].strip(), 16)  # removes label value, strips whitespaces, converts hex to int
+                print("Core running " + self.inputFile + " will be stalled for " + self.stallCount + " cycles")
             else:
                 return False
 
