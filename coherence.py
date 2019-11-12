@@ -40,8 +40,6 @@ def main():
     for i in range(4):
         percore = benchmark + str(i) + '.data'  # appends index and file type .data
         cores.append(Core(percore.replace('\\', '/')))  # replace all \\ with / because python sys paths are weird
-        print("the first 4 lines of file " + str(i))
-        cores[i].dataread()
 
     print("\n\n\n")
     print("============Results============\n")
