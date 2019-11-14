@@ -1,5 +1,3 @@
-
-
 class Core:
     def __init__(self, input):
         self.inputFile = input
@@ -25,9 +23,9 @@ class Core:
             self.instCount += 1
             command = self.instrlist.pop(0).strip()  # pops the front of the list and removes lead/trailing whitespace
             if command[:1] == '0':  # load
-                # TODO: fill in PrRd case
+                pass  # TODO: fill in PrRd case
             elif command[:1] == '1':  # store
-                # TODO: fill in PrWr case
+                pass  # TODO: fill in PrWr case
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
                 self.stallCount = int(command[2:].strip(), 16)  # removes label value, strips whitespaces, converts hex to int
