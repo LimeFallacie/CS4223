@@ -43,3 +43,6 @@ class Core:
             self.stallCount -= 1
             if self.stallCount == 0:
                 self.stall = False
+
+    def get_controller(self):
+        return self.controller

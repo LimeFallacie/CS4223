@@ -40,11 +40,13 @@ def main():
     print(benchmark)
 
     cores = []
-    # controllers = [] for passing into Bus constructor later
+    controllers = []  # for passing into Bus constructor later
     for i in range(4):
         percore = benchmark + str(i) + '.data'  # appends index and file type .data
         cores.append(Core(protocol, percore.replace('\\', '/')))  # replace all \\ with / because python sys paths are weird
-    # bus = Bus(cores)
+        controllers.append(cores[i].get_controller())
+    bus = Bus(controllers)
+    print(bus)
 
     print("\n\n\n")
     print("============Results============\n")
