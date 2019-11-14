@@ -1,5 +1,6 @@
 import math
 from collections import deque
+from cache import Constants
 
 
 class CacheBlock:
@@ -24,11 +25,12 @@ class CacheSet:
     def __init__(self, associativity):
         self.associativity = associativity
         self.cacheBlocks = []
+        # queue with index of LRU cacheblock on leftmost
         self.LRUindex = deque()
         # sets
         for i in range(0, associativity):
             self.LRUindex.append(i)
-            self.cacheBlocks.append(CacheBlock(0, "invalid"))
+            self.cacheBlocks.append(CacheBlock(0, Constants.States.INVALID))
 
     def contains(self, tag):
         for block in self.cacheBlocks:
@@ -40,24 +42,36 @@ class CacheSet:
         index = self.LRUindex.popleft()
         self.cacheBlocks.remove(index)
         self.cacheBlocks.insert(index, cache_block)
+        self.LRUindex.append(index)
 
     # prerequisite : data is found in cache set
     def get_state(self, tag):
         for block in self.cacheBlocks:
             if block.get_tag() == tag:
                 return block.get_state()
-        return "invalid"
+        return Constants.States.INVALID
 
     # prerequisite : data is found in cache set
     def update_state(self, tag, state):
         for block in self.cacheBlocks:
             if block.get_tag() == tag:
-                block.set_state(state)
+                block.set_state(state)  # update state
+
+    def get_LRU_index(self, cache_block):
+        cache_index = self.cacheBlocks.index(cache_block)
+        return self.LRUindex.index(cache_index)
+
+    # prerequisite : data is found in cache set
+    def access(self, tag):
+        for block in self.cacheBlocks:
+            if block.get_tag() == tag:
+                index = self.get_LRU_index(block)
+                self.LRUindex.append(self.LRUindex.pop(index))
 
 
 class Cache:
     def __init__(self, size, associativity, block_size):
-        set_size = size / (block_size * associativity)
+        set_size = (int) (size / (block_size * associativity))
         self.indexBits = math.log(set_size, 2)
         self.offsetBits = math.log(block_size, 2)
         self.tagBits = 32 - self.indexBits - self.offsetBits
@@ -94,3 +108,7 @@ class Cache:
     def update_state(self, address, state):
         cache_set = self.cacheSets[self.get_index(address)]
         cache_set.update_state(self.get_tag(address), state)
+
+    def access(self, address):
+        cache_set = self.cacheSets[self.get_index(address)]
+        cache_set.access(self.get_tag(address))

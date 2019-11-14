@@ -1,7 +1,8 @@
-from cache import MESI,Dragon
+from cache import MESI, Dragon
+
 
 class Core:
-    def __init__(self, protocol, input):
+    def __init__(self, protocol, input, cache_size, associativity, block_size):
         self.inputFile = input
         self.stall = False
         self.completed = False
@@ -10,9 +11,9 @@ class Core:
         self.instrlist = []  # list of instr lines
         self.dataread()
         if protocol.upper() == 'MESI':
-            self.controller = MESI()
+            self.controller = MESI(cache_size, associativity, block_size, self)
         elif protocol.lower() == 'dragon':
-            self.controller = Dragon()
+            self.controller = Dragon(cache_size, associativity, block_size, self)
 
     # reads data from file, returns list of instructions
     def dataread(self):

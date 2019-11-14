@@ -43,13 +43,13 @@ def main():
     controllers = []  # for passing into Bus constructor later
     for i in range(4):
         percore = benchmark + str(i) + '.data'  # appends index and file type .data
-        cores.append(Core(protocol, percore.replace('\\', '/')))  # replace all \\ with / because python sys paths are weird
+        cores.append(Core(protocol, percore.replace('\\', '/'), cacheSize, assoc, blockSize))  # replace all \\ with / because python sys paths are weird
         controllers.append(cores[i].get_controller())
     bus = Bus(controllers)
     print(bus)
 
     print("\n\n\n")
-    print("============Results============\n")
+    print("============RESULTS============\n")
     # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
     print("overall cycle count = %s" % "PLACEHOLDER")
     for i in range(1, 5):
