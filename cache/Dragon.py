@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 from cache import CacheController
 
 
-class MESI(CacheController):
+class Dragon(CacheController):
     def __init__(self):
-        print('MESI constructor has been called')
+        print('Dragon constructor has been called')
         print(self)
 
 
 if __name__=='__main__':
-    MESI()
+    Dragon()

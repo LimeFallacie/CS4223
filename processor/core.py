@@ -1,12 +1,18 @@
+from cache import MESI,Dragon
+
 class Core:
-    def __init__(self, input):
+    def __init__(self, protocol, input):
         self.inputFile = input
         self.stall = False
         self.completed = False
         self.stallCount = 0  # for counting stall cycles for instr execution
         self.instCount = 0  # counts total num instr already read
         self.instrlist = []  # list of instr lines
-        self.dataread(self)
+        self.dataread()
+        if protocol.upper() == 'MESI':
+            self.controller = MESI()
+        elif protocol.lower() == 'dragon':
+            self.controller = Dragon()
 
     # reads data from file, returns list of instructions
     def dataread(self):

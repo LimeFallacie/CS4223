@@ -1,5 +1,6 @@
 import sys, os
-from processor.Core import Core
+from processor import Core
+from bus import Bus
 
 #constants
 WORD_SIZE = 4;
@@ -27,6 +28,8 @@ def main():
     # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
     print("protocol = %s" % protocol)
     print("input file = %s" % input)
+    if input == 'fluid':
+        input = input + 'animate'
     print("cache size = %s" % cacheSize)
     print("assoc = %s" % assoc)
     print("block size = %s" % blockSize)
@@ -37,9 +40,11 @@ def main():
     print(benchmark)
 
     cores = []
+    # controllers = [] for passing into Bus constructor later
     for i in range(4):
         percore = benchmark + str(i) + '.data'  # appends index and file type .data
-        cores.append(Core(percore.replace('\\', '/')))  # replace all \\ with / because python sys paths are weird
+        cores.append(Core(protocol, percore.replace('\\', '/')))  # replace all \\ with / because python sys paths are weird
+    # bus = Bus(cores)
 
     print("\n\n\n")
     print("============Results============\n")

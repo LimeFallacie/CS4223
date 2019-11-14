@@ -3,3 +3,4 @@ from .Cache import CacheBlock
 from .Cache import CacheSet
 from .CacheController import CacheController
 from .MESI import MESI
+from .Dragon import Dragon
