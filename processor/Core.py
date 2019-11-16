@@ -29,10 +29,13 @@ class Core:
         if not self.stall and (self.stallCount == 0):
             self.instCount += 1
             command = self.instrlist.pop(0).strip()  # pops the front of the list and removes lead/trailing whitespace
+            print(command[2:])
+            bin_command = bin(int(command[2:].strip(), 16))[2:].zfill(32)  # converts the hex string to binary
+            print(bin_command)  # bin_command is currently a string
             if command[:1] == '0':  # load
-                pass  # TODO: fill in PrRd case
+                self.get_controller().prRd(int(bin_command, 2))
             elif command[:1] == '1':  # store
-                pass  # TODO: fill in PrWr case
+                self.get_controller().prWr(int(bin_command, 2))
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
                 self.stallCount = int(command[2:].strip(), 16)  # removes label value, strips whitespaces, converts hex to int
@@ -47,3 +50,9 @@ class Core:
 
     def get_controller(self):
         return self.controller
+
+    def check_done(self):
+        if self.instrlist[0].strip() == "":
+            return True
+        else:
+            return False

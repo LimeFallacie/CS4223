@@ -46,7 +46,23 @@ def main():
         cores.append(Core(protocol, percore.replace('\\', '/'), cacheSize, assoc, blockSize))  # replace all \\ with / because python sys paths are weird
         controllers.append(cores[i].get_controller())
     bus = Bus(controllers)
-    print(bus)
+
+    completed = False
+    check = [False, False, False, False]  # all 4 cores not completed yet
+    progress = 0
+    while not completed:
+        for i in range(4):
+            if not cores[i].check_done():
+                cores[i].nextTick()
+            elif not check[i]:  # if core[i] done, check[i] = True
+                check[i] = True
+                progress += 1  # once progress = 4 break
+            else:
+                pass
+
+        # bus.nextTick()
+        if progress == 4:
+            completed = True
 
     print("\n\n\n")
     print("============RESULTS============\n")
