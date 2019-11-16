@@ -38,7 +38,7 @@ class Core:
                 self.get_controller().prWr(int(bin_command, 2))
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
-                self.stallCount = int(command[2:].strip(), 16)  # removes label value, strips whitespaces, converts hex to int
+                self.stallCount = int(command[2:].strip(), 16)
                 print("Core running " + self.inputFile + " will be stalled for " + self.stallCount + " cycles")
             else:
                 return False

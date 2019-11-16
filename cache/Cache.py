@@ -71,9 +71,9 @@ class CacheSet:
 
 class Cache:
     def __init__(self, size, associativity, block_size):
-        set_size = (int) (size / (block_size * associativity))
-        self.indexBits = math.log(set_size, 2)
-        self.offsetBits = math.log(block_size, 2)
+        set_size = int(size / (block_size * associativity))
+        self.indexBits = int(math.log(set_size, 2))
+        self.offsetBits = int(math.log(block_size, 2))
         self.tagBits = 32 - self.indexBits - self.offsetBits
         self.cacheSets = []
         # indexes
