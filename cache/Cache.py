@@ -79,14 +79,15 @@ class Cache:
         # indexes
         for i in range(0, set_size):
             self.cacheSets.append(CacheSet(associativity))
+        # print(len(self.cacheSets))
         self.missCount = 0
         self.accessCount = 0
 
     # obtain the index value
     # prerequisite: address is 32 bits
     def get_index(self, address):
-        addressStr = str(address)
-        return int(addressStr[self.tagBits - 1 : 32 - self.offsetBits])
+        print("getting index from "+ address[self.tagBits - 1 : 32 - self.offsetBits])
+        return int(address[self.tagBits - 1 : 32 - self.offsetBits], 2)
 
     # obtain the tag value
     # prerequisite: address is 32 bits
@@ -99,6 +100,8 @@ class Cache:
         cache_set.add(CacheBlock(self.get_tag(address), state))
 
     def contains(self, address):
+        # print(address)
+        # print(self.get_index(address))
         cache_set = self.cacheSets[self.get_index(address)]
         return cache_set.contains(self.get_tag(address))
 

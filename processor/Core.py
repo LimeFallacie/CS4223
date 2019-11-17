@@ -4,7 +4,7 @@ from cache import MESI, Dragon
 class Core:
     def __init__(self, protocol, input, cache_size, associativity, block_size):
         self.inputFile = input
-        self.stall = False
+        self.stalled = False
         self.completed = False
         self.stallCount = 0  # for counting stall cycles for instr execution
         self.instCount = 0  # counts total num instr already read
@@ -22,20 +22,20 @@ class Core:
         self.instrlist = instrlist
 
     def stall(self):
-        print("Core running " + self.inputFile + "has been stalled\n")
-        self.stall = True
+        print("Core running " + self.inputFile + " has been stalled\n")
+        self.stalled = True
 
     def nextTick(self):
-        if not self.stall and (self.stallCount == 0):
+        if not self.stalled and (self.stallCount == 0):
             self.instCount += 1
             command = self.instrlist.pop(0).strip()  # pops the front of the list and removes lead/trailing whitespace
-            print(command[2:])
+            print(command)
             bin_command = bin(int(command[2:].strip(), 16))[2:].zfill(32)  # converts the hex string to binary
-            print(bin_command)  # bin_command is currently a string
+            print(bin_command)
             if command[:1] == '0':  # load
-                self.get_controller().prRd(int(bin_command, 2))
+                self.get_controller().prRd(bin_command)
             elif command[:1] == '1':  # store
-                self.get_controller().prWr(int(bin_command, 2))
+                self.get_controller().prWr(bin_command)
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
                 self.stallCount = int(command[2:].strip(), 16)
@@ -43,10 +43,10 @@ class Core:
             else:
                 return False
 
-        elif not self.stall and (self.stallCount > 0):
+        elif not self.stalled and (self.stallCount > 0):
             self.stallCount -= 1
             if self.stallCount == 0:
-                self.stall = False
+                self.stalled = False
 
     def get_controller(self):
         return self.controller
