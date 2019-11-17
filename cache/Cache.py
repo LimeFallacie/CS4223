@@ -116,3 +116,14 @@ class Cache:
     def access(self, address):
         cache_set = self.cacheSets[self.get_index(address)]
         cache_set.access(self.get_tag(address))
+
+    # debug
+    def printCache(self):
+        i = 0
+        for set in self.cacheSets:
+            print("### index %d ###" % i)
+            j = 0
+            for block in set.cacheBlocks:
+                print("  set%3d: %32d, %s" % (j, block.tag, block.state))
+                j += 1
+            i += 1
