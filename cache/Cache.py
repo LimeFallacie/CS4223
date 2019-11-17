@@ -85,13 +85,12 @@ class Cache:
     # obtain the index value
     # prerequisite: address is 32 bits
     def get_index(self, address):
-        shift_up = address << self.tagBits
-        return shift_up >> (self.offsetBits + self.tagBits)
+        return address[(self.tagBits - 1 : self.offsetBits]
 
     # obtain the tag value
     # prerequisite: address is 32 bits
     def get_tag(self, address):
-        return address >> (self.indexBits + self.offsetBits)
+        return address[ : (32 - self.indexBits - self.offsetBits)]
 
     def add_to_cache(self, address, state):
         cache_set = self.cacheSets[self.get_index(address)]
