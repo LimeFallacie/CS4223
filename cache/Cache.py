@@ -86,8 +86,8 @@ class Cache:
     # obtain the index value
     # prerequisite: address is 32 bits
     def get_index(self, address):
-        print("getting index from "+ address[self.tagBits - 1 : 32 - self.offsetBits])
-        return int(address[self.tagBits - 1 : 32 - self.offsetBits], 2)
+        print("getting index from "+ address[self.tagBits : 32 - self.offsetBits])
+        return int(address[self.tagBits : 32 - self.offsetBits], 2)
 
     # obtain the tag value
     # prerequisite: address is 32 bits
