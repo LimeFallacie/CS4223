@@ -11,6 +11,8 @@ class Core:
         self.instrlist = []  # list of instr lines
         self.dataread()
         self.identifier = identifier
+        self.compute_cycles = 0
+        self.ldr_and_str = 0
         if protocol.upper() == 'MESI':
             self.controller = MESI(cache_size, associativity, block_size, self)
         elif protocol.lower() == 'dragon':
@@ -41,12 +43,15 @@ class Core:
             bin_command = bin(int(command[2:].strip(), 16))[2:].zfill(32)  # converts the hex string to binary
             print(bin_command)
             if command[:1] == '0':  # load
+                self.ldr_and_str += 1
                 self.get_controller().prRd(bin_command)
             elif command[:1] == '1':  # store
+                self.ldr_and_str += 1
                 self.get_controller().prWr(bin_command)
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
                 self.stallCount = int(command[2:].strip(), 16)
+                self.compute_cycles += self.stallCount
                 # print("Core running " + self.inputFile + " will be stalled for " + str(self.stallCount) + " cycles")
             else:
                 return False
@@ -67,3 +72,9 @@ class Core:
 
     def get_instCount(self):
         return self.instCount
+
+    def get_computeCycles(self):
+        return self.compute_cycles
+
+    def get_LDSTR(self):
+        return self.ldr_and_str

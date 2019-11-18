@@ -72,8 +72,8 @@ def main():
     print("overall cycle count = %s" % total_cycles)
     for i in range(1, 5):
         print("======== core %s ========" % i)
-        print("cycle count for core %d = %s" % (i, cores[i-1].get_instCount()))
-        print("load/store instruction count for core %d = %s" % (i, "PLACEHOLDER"))
+        print("cycle count for core %d = %s" % (i, cores[i-1].get_computeCycles()))
+        print("load/store instruction count for core %d = %s" % (i, cores[i-1].get_LDSTR()))
         print("idle cycle count for core %d = %s" % (i, "PLACEHOLDER"))
         print("data cache miss rate for core %d = %s%%" % (i, "PLACEHOLDER"))
     print("========================")
