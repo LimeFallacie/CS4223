@@ -1,11 +1,49 @@
-from cache import CacheController, Constants
+from cache import Cache, CacheController, Constants
 from bus import Transaction
 
 
 class Dragon(CacheController):
+    
+    def unstall(self, shared):
+        if (self.unstall_address == -1): #state after eviction
+            self.unstall()
+            self.stalled = False
+            return
+        unstall_state = ""
+        
+        if (self.unstall_action == "PrRdMiss"):
+            unstall_state = Constants.States.SHARED_CLEAN if shared else Constants.States.EXCLUSIVE
+            
+        elif (self.unstall_action == "BusUpd"):
+            unstall_state = Constants.States.SHARED_MODIFIED if shared else Constants.States.MODIFIED
+            
+        elif (self.unstall_action == "PrWrMiss") and shared:
+            self.busUpd(self.unstallAddress)
+            return
+        else:
+            unstall_state = Constants.States.SHARED_MODIFIED
+            
+        index = self.cache.contains(self.unstall_address)
+        
+        if (index >= 0):
+            self.cache.update_state(self.unstall_address, unstall_state)
+        #else:
+            #eviction necessary here
+            
+        self.unstall_address = 0
+        self.unstall_action = ""
+        
+        self.core.unstall()
+        self.stalled = False
+        
+        
+            
+            
 
     def busUpd(self, address):
         self.core.stall()
+        self.unstall_address = address
+        self.unstall_action = "BusUpd"
         self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusUpd, self.core, address))
 
     def prRd(self, address):
@@ -26,6 +64,8 @@ class Dragon(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
+            self.unstall_address = address
+            self.unstall_action = "PrRdMiss"
             self.busRd(address)
 
     def prWr(self, address):
@@ -50,6 +90,8 @@ class Dragon(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
+            self.unstall_address = address
+            self.unstall_action = "PrWrMiss"
             self.busRd(address)
 
     def snoop(self, transaction):

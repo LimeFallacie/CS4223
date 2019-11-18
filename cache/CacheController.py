@@ -12,9 +12,24 @@ class CacheController(ABC):
         self.privAccess = 0
         self.pubAccess = 0
         self.core = core
+        self.can_provide = False
+        self.unstall_address = -1
+        self.unstall_action = ""
+        self.stalled = False
+        
 
     def stall(self):
+        self.stalled = True
         self.core.stall()
+        
+    def unstall(self):
+        self.stalled = False
+        self.core.unstall()
+        
+    def can_provide(self):
+        result = self.can_provide
+        self.can_provide = False
+        return result
 
     def connect_bus(self, bus):
         self.bus = bus

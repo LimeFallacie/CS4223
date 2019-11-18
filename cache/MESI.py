@@ -2,6 +2,35 @@ from cache import CacheController, Constants
 
 
 class MESI(CacheController):
+    
+    def unstall(self, shared):
+        if (self.unstall_address == -1): #state after eviction
+            self.unstall()
+            self.stalled = False
+            return
+        
+        unstall_state = ""
+        
+        if (self.unstall_action == "PrRd"):
+            unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE 
+            
+        else:
+            unstall_state = Constants.States.MODIFIED
+            
+        index = self.cache.contains(self.unstall_address)
+            
+        if (index >= 0):
+            self.cache.update_state(self.unstall_address, unstall_state)
+        #else:
+            #eviction necessary here
+            
+        self.unstall_address = 0
+        self.unstall_action = ""
+        
+        self.core.unstall()
+        self.stalled = False
+        
+        
 
     def prRd(self, address):
         # data is present in cache
@@ -24,6 +53,8 @@ class MESI(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
+            self.unstall_address = address
+            self.unstall_action = "PrRd"
             self.busRd(address)
 
     def prWr(self, address):
@@ -47,6 +78,8 @@ class MESI(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
+            self.unstall_address = address
+            self.unstall_action = "PrWr"
             self.busRdX(address)
 
     def snoop(self, transaction):

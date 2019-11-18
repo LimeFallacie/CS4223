@@ -43,9 +43,9 @@ def main():
     controllers = []  # for passing into Bus constructor later
     for i in range(4):
         percore = benchmark + str(i) + '.data'  # appends index and file type .data
-        cores.append(Core(protocol, percore.replace('\\', '/'), cacheSize, assoc, blockSize))  # replace all \\ with / because python sys paths are weird
+        cores.append(Core(protocol, percore.replace('\\', '/'), cacheSize, assoc, blockSize, i))  # replace all \\ with / because python sys paths are weird
         controllers.append(cores[i].get_controller())
-    bus = Bus(controllers)
+    bus = Bus(controllers, BLOCK_SIZE, BLOCK_SIZE/WORD_SIZE)
 
     completed = False
     check = [False, False, False, False]  # all 4 cores not completed yet
@@ -60,7 +60,7 @@ def main():
             else:
                 pass
 
-        # bus.nextTick()
+        bus.nextTick()
         if progress == 4:
             completed = True
 

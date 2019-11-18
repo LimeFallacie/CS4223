@@ -2,7 +2,7 @@ from cache import MESI, Dragon
 
 
 class Core:
-    def __init__(self, protocol, input, cache_size, associativity, block_size):
+    def __init__(self, protocol, input, cache_size, associativity, block_size, identifier):
         self.inputFile = input
         self.stalled = False
         self.completed = False
@@ -10,10 +10,14 @@ class Core:
         self.instCount = 0  # counts total num instr already read
         self.instrlist = []  # list of instr lines
         self.dataread()
+        self.identifier = identifier
         if protocol.upper() == 'MESI':
             self.controller = MESI(cache_size, associativity, block_size, self)
         elif protocol.lower() == 'dragon':
             self.controller = Dragon(cache_size, associativity, block_size, self)
+            
+    def get_identifier(self):
+        return self.identifier
 
     # reads data from file, returns list of instructions
     def dataread(self):
@@ -24,6 +28,10 @@ class Core:
     def stall(self):
         print("Core running " + self.inputFile + " has been stalled\n")
         self.stalled = True
+        
+    def unstall(self):
+        print("Core running " + self.inputFile + " has been unstalled\n")
+        self.stalled = False
 
     def nextTick(self):
         if not self.stalled and (self.stallCount == 0):
@@ -39,7 +47,7 @@ class Core:
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
                 self.stallCount = int(command[2:].strip(), 16)
-                print("Core running " + self.inputFile + " will be stalled for " + self.stallCount + " cycles")
+                print("Core running " + self.inputFile + " will be stalled for " + str(self.stallCount) + " cycles")
             else:
                 return False
 
