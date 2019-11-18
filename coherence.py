@@ -50,7 +50,9 @@ def main():
     completed = False
     check = [False, False, False, False]  # all 4 cores not completed yet
     progress = 0
+    total_cycles = 0
     while not completed:
+        total_cycles += 1
         for i in range(4):
             if not cores[i].check_done():
                 cores[i].nextTick()
@@ -67,10 +69,10 @@ def main():
     print("\n\n\n")
     print("============RESULTS============\n")
     # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
-    print("overall cycle count = %s" % "PLACEHOLDER")
+    print("overall cycle count = %s" % total_cycles)
     for i in range(1, 5):
         print("======== core %s ========" % i)
-        print("cycle count for core %d = %s" % (i, "PLACEHOLDER"))
+        print("cycle count for core %d = %s" % (i, cores[i-1].get_instCount()))
         print("load/store instruction count for core %d = %s" % (i, "PLACEHOLDER"))
         print("idle cycle count for core %d = %s" % (i, "PLACEHOLDER"))
         print("data cache miss rate for core %d = %s%%" % (i, "PLACEHOLDER"))

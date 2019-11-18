@@ -53,7 +53,7 @@ class Bus:
             if (can_provide):
                 self.wait_counter = self.block_update
             else:
-                wait_counter = Constant.BusConstants.MISS
+                wait_counter = Constants.BusConstants.MISS
             
         elif (transaction.get_transaction == Constants.TransactionTypes.BusRdX):
             for i in cache_sharing:
@@ -63,10 +63,10 @@ class Bus:
             if (can_provide):
                 self.wait_counter = self.block_update
             else:
-                self.wait_counter = Constant.BusConstants.MISS
+                self.wait_counter = Constants.BusConstants.MISS
                 
         elif (transaction.get_transaction == Constants.TransactionTypes.BusUpd):
-            self.wait_counter = Constant.BusConstants.UPDATE          
+            self.wait_counter = Constants.BusConstants.UPDATE
                 
                 
 class Transaction:

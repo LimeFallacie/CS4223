@@ -26,11 +26,11 @@ class Core:
         self.instrlist = instrlist
 
     def stall(self):
-        print("Core running " + self.inputFile + " has been stalled\n")
+        # print("Core running " + self.inputFile + " has been stalled\n")
         self.stalled = True
         
     def unstall(self):
-        print("Core running " + self.inputFile + " has been unstalled\n")
+        # print("Core running " + self.inputFile + " has been unstalled\n")
         self.stalled = False
 
     def nextTick(self):
@@ -47,7 +47,7 @@ class Core:
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
                 self.stallCount = int(command[2:].strip(), 16)
-                print("Core running " + self.inputFile + " will be stalled for " + str(self.stallCount) + " cycles")
+                # print("Core running " + self.inputFile + " will be stalled for " + str(self.stallCount) + " cycles")
             else:
                 return False
 
@@ -60,7 +60,10 @@ class Core:
         return self.controller
 
     def check_done(self):
-        if self.instrlist[0].strip() == "":
+        if not self.instrlist:
             return True
         else:
             return False
+
+    def get_instCount(self):
+        return self.instCount
