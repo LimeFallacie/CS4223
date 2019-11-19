@@ -13,7 +13,15 @@ class Bus:
         self.shared = False
         self.wait_counter = 0
         self.source_core = -1
+        self.data_traffic = 0
+        self.invalidations = 0
         
+    
+    def get_data_traffic(self):
+        return self.data_traffic
+    
+    def get_invalidations(self):
+        return self.invalidations
        
 
     def add_transaction(self, transaction):
@@ -45,7 +53,7 @@ class Bus:
         
         can_provide = False
         
-        if (transaction.get_transaction == Constants.TransactionTypes.BusRd):
+        if (transaction.get_transaction() == Constants.TransactionTypes.BusRd):
             for i in cache_sharing:
                 if (self.controllers[i].can_provide()):
                     can_provide = True
@@ -54,8 +62,10 @@ class Bus:
                 self.wait_counter = self.block_update
             else:
                 wait_counter = Constants.BusConstants.MISS
+                
+            self.data_traffic += self.block_size
             
-        elif (transaction.get_transaction == Constants.TransactionTypes.BusRdX):
+        elif (transaction.get_transaction() == Constants.TransactionTypes.BusRdX):
             for i in cache_sharing:
                 if (self.controllers[i].can_provide()):
                     can_provide = True
@@ -64,9 +74,14 @@ class Bus:
                 self.wait_counter = self.block_update
             else:
                 self.wait_counter = Constants.BusConstants.MISS
+            
+            self.data_traffic += self.block_size
                 
-        elif (transaction.get_transaction == Constants.TransactionTypes.BusUpd):
+        elif (transaction.get_transaction() == Constants.TransactionTypes.BusUpd):
             self.wait_counter = Constants.BusConstants.UPDATE
+            
+            self.data_traffic += Constants.BusConstants.WORDSIZE
+            self.invalidations += 1
                 
                 
 class Transaction:

@@ -77,8 +77,8 @@ def main():
         print("idle cycle count for core %d = %s" % (i, "PLACEHOLDER"))
         print("data cache miss rate for core %d = %s%%" % (i, "PLACEHOLDER"))
     print("========================")
-    print("bus data traffic in bytes = %s" % "PLACEHOLDER")
-    print("number of invalidation or update in bus = %s" % "PLACEHOLDER")
+    print("bus data traffic in bytes = %s" % str(bus.get_data_traffic()))
+    print("number of invalidation or update in bus = %s" % str(bus.get_invalidations()))
     print("private data versus shared data access distribution = %s%%" % "PLACEHOLDER")
 
 
