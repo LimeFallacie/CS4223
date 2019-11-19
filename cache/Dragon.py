@@ -47,6 +47,7 @@ class Dragon(CacheController):
         self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusUpd, self.core, address))
 
     def prRd(self, address):
+        self.unstall_address = address
         # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
@@ -64,11 +65,11 @@ class Dragon(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_address = address
             self.unstall_action = "PrRdMiss"
             self.busRd(address)
 
     def prWr(self, address):
+        self.unstall_address = address
         # data is present in cache
         if self.cache.contains(address):
             # data is in M state
@@ -90,7 +91,6 @@ class Dragon(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_address = address
             self.unstall_action = "PrWrMiss"
             self.busRd(address)
 

@@ -34,6 +34,7 @@ class MESI(CacheController):
         
 
     def prRd(self, address):
+        self.unstall_address = address
         # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
@@ -59,6 +60,7 @@ class MESI(CacheController):
             self.busRd(address)
 
     def prWr(self, address):
+        self.unstall_address = address
         # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
