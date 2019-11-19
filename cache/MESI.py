@@ -55,7 +55,6 @@ class MESI(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_address = address
             self.unstall_action = "PrRd"
             self.busRd(address)
 
@@ -81,7 +80,6 @@ class MESI(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_address = address
             self.unstall_action = "PrWr"
             self.busRdX(address)
 
