@@ -3,26 +3,26 @@ from processor import Core
 from bus import Bus
 
 #constants
-WORD_SIZE = 4;
-BLOCK_SIZE = 32;
-CACHE_SIZE = 4096;
-ASSOCIATIVITY = 2;
+DEFAULT_WORD_SIZE = 4;
+DEFAULT_BLOCK_SIZE = 32;
+DEFAULT_CACHE_SIZE = 4096;
+DEFAULT_ASSOCIATIVITY = 2;
 
 
 def main():
-    if not (len(sys.argv)==3 or len(sys.argv) == 6):
+    if not (len(sys.argv) == 3 or len(sys.argv) == 6):
         sys.exit("wrong number of arguments: " + str(len(sys.argv)))
 
     protocol = sys.argv[1]
     input = sys.argv[2]
-    cacheSize = CACHE_SIZE
-    assoc = ASSOCIATIVITY
-    blockSize = BLOCK_SIZE
+    cacheSize = DEFAULT_CACHE_SIZE
+    assoc = DEFAULT_ASSOCIATIVITY
+    blockSize = DEFAULT_BLOCK_SIZE
 
-    if len(sys.argv) == 3:
-        cacheSize = sys.argv[3]
-        assoc = sys.argv[4]
-        blockSize = sys.argv[5]
+    if len(sys.argv) == 6:
+        cacheSize = int(sys.argv[3])
+        assoc = int(sys.argv[4])
+        blockSize = int(sys.argv[5])
 
     print("============CONFIG============\n")
     # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
@@ -37,7 +37,7 @@ def main():
     cwd = os.getcwd()
     benchmark = '\\benchmarks\\' + input + '\\' + input + '_'
     benchmark = cwd + benchmark
-    print(benchmark)
+    # print(benchmark)
 
     cores = []
     controllers = []  # for passing into Bus constructor later
@@ -45,7 +45,7 @@ def main():
         percore = benchmark + str(i) + '.data'  # appends index and file type .data
         cores.append(Core(protocol, percore.replace('\\', '/'), cacheSize, assoc, blockSize, i))  # replace all \\ with / because python sys paths are weird
         controllers.append(cores[i].get_controller())
-    bus = Bus(controllers, BLOCK_SIZE, BLOCK_SIZE/WORD_SIZE)
+    bus = Bus(controllers, blockSize, blockSize/DEFAULT_WORD_SIZE)
 
     completed = False
     check = [False, False, False, False]  # all 4 cores not completed yet
