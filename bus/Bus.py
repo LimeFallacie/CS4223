@@ -61,7 +61,7 @@ class Bus:
             if (can_provide):
                 self.wait_counter = self.block_update
             else:
-                wait_counter = Constants.BusConstants.MISS
+                self.wait_counter = Constants.BusConstants.MISS
                 
             self.data_traffic += self.block_size
             

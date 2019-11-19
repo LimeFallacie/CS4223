@@ -124,6 +124,7 @@ class Dragon(CacheController):
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED_MODIFIED)
+                    self.can_provide = True
                     # data is to be copied over to target cache
                     return True
                 # transaction is BusUpd
@@ -138,6 +139,7 @@ class Dragon(CacheController):
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED_MODIFIED)
+                    self.can_provide = True
                     # data is to be copied over to target cache
                     return True
 
