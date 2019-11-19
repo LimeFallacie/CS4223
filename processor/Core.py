@@ -53,17 +53,17 @@ class Core:
                 self.get_controller().prWr(bin_command)
             elif command[:1] == '2':  # other
                 # set self.stallCount value for stall timer
+                self.stall()
                 self.stallCount = int(command[2:].strip(), 16)
                 self.compute_cycles += self.stallCount
                 # print("Core running " + self.inputFile + " will be stalled for " + str(self.stallCount) + " cycles")
             else:
                 return False
 
-        elif self.stalled and (self.stallCount > 0):
+        elif self.stalled and (self.stallCount > 0):  # executing label 2
             self.stallCount -= 1
-            self.idle_cycles += 1
             if self.stallCount == 0:
-                self.stalled = False
+                self.unstall()
         else:
             self.idle_cycles += 1
 
