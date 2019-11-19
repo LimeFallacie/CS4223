@@ -18,7 +18,7 @@ class Dragon(CacheController):
             unstall_state = Constants.States.SHARED_MODIFIED if shared else Constants.States.MODIFIED
             
         elif (self.unstall_action == "PrWrMiss") and shared:
-            self.busUpd(self.unstallAddress)
+            self.busUpd(self.unstall_address)
             return
         else:
             unstall_state = Constants.States.SHARED_MODIFIED
