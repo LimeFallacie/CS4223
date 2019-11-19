@@ -44,9 +44,9 @@ class Core:
             command = self.instrlist.pop(0).strip()  # pops the front of the list and removes lead/trailing whitespace
             bin_command = bin(int(command[2:].strip(), 16))[2:].zfill(32)  # converts the hex string to binary
 
-            print("id = " + str(self.identifier) + "\tprogress = " + str(self.instCount))
-            print(command)
-            print(bin_command)
+            # print("id = " + str(self.identifier) + "\tprogress = " + str(self.instCount))
+            # print(command)
+            # print(bin_command)
             if command[:1] == '0':  # load
                 self.ldr_and_str += 1
                 self.get_controller().prRd(bin_command)
