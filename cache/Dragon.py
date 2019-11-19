@@ -109,7 +109,7 @@ class Dragon(CacheController):
                     self.can_provide_flag = True
                     return True
             # data is in SC state
-            elif self.cache.update_state(transaction.get_address()) == Constants.States.SHARED:
+            elif self.cache.get_state(transaction.get_address()) == Constants.States.SHARED:
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
@@ -137,7 +137,7 @@ class Dragon(CacheController):
                     # data does not need to be copied to target cache
                     return False
             # data is in M state
-            elif self.cache.update_state(transaction.get_address()) == Constants.States.MODIFIED:
+            elif self.cache.get_state(transaction.get_address()) == Constants.States.MODIFIED:
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED_MODIFIED)

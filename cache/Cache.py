@@ -66,7 +66,7 @@ class CacheSet:
         for block in self.cacheBlocks:
             if block.get_tag() == tag:
                 index = self.get_LRU_index(block)
-                self.LRUindex.append(self.LRUindex.pop(index))
+                self.LRUindex.append(list(self.LRUindex).pop(index))
 
 
 class Cache:
@@ -87,7 +87,8 @@ class Cache:
     # prerequisite: address is 32 bits
     def get_index(self, address):
         # print("getting index from "+ address[self.tagBits : 32 - self.offsetBits])
-        return int(address[self.tagBits : 32 - self.offsetBits], 2)
+        addressStr = str(address)
+        return int(addressStr[self.tagBits : 32 - self.offsetBits], 2)
 
     # obtain the tag value
     # prerequisite: address is 32 bits

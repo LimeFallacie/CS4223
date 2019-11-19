@@ -128,5 +128,5 @@ class MESI(CacheController):
                     # data does not need to be copied to target cache
                     return False
             # data is in I state
-            elif self.cache.update_state(transaction.get_address()) == Constants.States.INVALID:
+            elif self.cache.get_state(transaction.get_address()) == Constants.States.INVALID:
                 return False
