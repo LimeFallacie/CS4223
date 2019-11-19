@@ -13,6 +13,8 @@ class Core:
         self.identifier = identifier
         self.compute_cycles = 0
         self.ldr_and_str = 0
+        self.exec_cycles = 0
+        self.idle_cycles = 0
         if protocol.upper() == 'MESI':
             self.controller = MESI(cache_size, associativity, block_size, self)
         elif protocol.lower() == 'dragon':
@@ -36,6 +38,7 @@ class Core:
         self.stalled = False
 
     def nextTick(self):
+        self.exec_cycles += 1
         if not self.stalled and (self.stallCount == 0):
             self.instCount += 1
             command = self.instrlist.pop(0).strip()  # pops the front of the list and removes lead/trailing whitespace
@@ -56,16 +59,19 @@ class Core:
             else:
                 return False
 
-        elif not self.stalled and (self.stallCount > 0):
+        elif self.stalled and (self.stallCount > 0):
             self.stallCount -= 1
+            self.idle_cycles += 1
             if self.stallCount == 0:
                 self.stalled = False
+        else:
+            self.idle_cycles += 1
 
     def get_controller(self):
         return self.controller
 
     def check_done(self):
-        if not self.instrlist:
+        if (not self.instrlist) and (not self.stalled):
             return True
         else:
             return False

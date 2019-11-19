@@ -72,9 +72,10 @@ def main():
     print("overall cycle count = %s" % total_cycles)
     for i in range(1, 5):
         print("======== core %s ========" % i)
+        print("execution cycles for core %d = %s" % (i, cores[i-1].exec_cycles))
         print("cycle count for core %d = %s" % (i, cores[i-1].get_computeCycles()))
         print("load/store instruction count for core %d = %s" % (i, cores[i-1].get_LDSTR()))
-        print("idle cycle count for core %d = %s" % (i, "PLACEHOLDER"))
+        print("idle cycle count for core %d = %s" % (i, cores[i-1].idle_cycles))
         print("data cache miss rate for core %d = %s%%" % (i, "PLACEHOLDER"))
     print("========================")
     print("bus data traffic in bytes = %s" % str(bus.get_data_traffic()))
