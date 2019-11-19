@@ -22,7 +22,9 @@ class Bus:
     
     def get_invalidations(self):
         return self.invalidations
-       
+
+    def add_to_cache(self, index, address, state):
+        self.controllers[index].add_to_cache(address, state)
 
     def add_transaction(self, transaction):
         self.transaction_list.append(transaction)
@@ -49,6 +51,7 @@ class Bus:
         for i in range(len(self.controllers)):
             if (i != self.source_core) and (self.controllers[i].snoop(transaction)):
                 self.shared = True
+                #print(self.source_core, "can get from ", self.controllers[i].core.identifier)
                 cache_sharing.append(i)
         
         can_provide = False

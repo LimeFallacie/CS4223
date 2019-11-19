@@ -12,7 +12,7 @@ class CacheController(ABC):
         self.privAccess = 0
         self.pubAccess = 0
         self.core = core
-        self.can_provide = False
+        self.can_provide_flag = False
         self.unstall_address = -1
         self.unstall_action = ""
         self.stalled = False
@@ -27,12 +27,18 @@ class CacheController(ABC):
         self.core.unstall()
         
     def can_provide(self):
-        result = self.can_provide
-        self.can_provide = False
+        result = self.can_provide_flag
+        self.can_provide_flag = False
         return result
 
     def connect_bus(self, bus):
         self.bus = bus
+
+    def get_cache(self):
+        return self.cache
+
+    def get_core_identifier(self):
+        return self.core.get_identifier()
 
     def get_miss_rate(self):
         return 100 * self.miss / (self.hit+self.miss)

@@ -40,7 +40,7 @@ class CacheSet:
 
     def add(self, cache_block):
         index = self.LRUindex.popleft()
-        self.cacheBlocks.remove(index)
+        self.cacheBlocks.pop(index)
         self.cacheBlocks.insert(index, cache_block)
         self.LRUindex.append(index)
 

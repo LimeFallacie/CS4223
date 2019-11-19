@@ -12,7 +12,7 @@ class Dragon(CacheController):
         unstall_state = ""
         
         if (self.unstall_action == "PrRdMiss"):
-            unstall_state = Constants.States.SHARED_CLEAN if shared else Constants.States.EXCLUSIVE
+            unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE
             
         elif (self.unstall_action == "BusUpd"):
             unstall_state = Constants.States.SHARED_MODIFIED if shared else Constants.States.MODIFIED
@@ -22,11 +22,11 @@ class Dragon(CacheController):
             return
         else:
             unstall_state = Constants.States.SHARED_MODIFIED
-            
-        index = self.cache.contains(self.unstall_address)
-        
-        if (index >= 0):
+
+        if (self.cache.contains(self.unstall_address)):
             self.cache.update_state(self.unstall_address, unstall_state)
+        else:
+            self.cache.add_to_cache(self.unstall_address, unstall_state)
         #else:
             #eviction necessary here
             
@@ -56,8 +56,8 @@ class Dragon(CacheController):
                 self.privAccess += 1
                 self.cache.access(address)
             # data is in SC or SM state
-            elif (self.cache.get_state(address) == Constants.States.SHARED_CLEAN or
-                    self.cache.get_state(address) == Constants.States.SHARED_MODIFIED):
+            elif (self.cache.get_state(address) == Constants.States.SHARED or
+                  self.cache.get_state(address) == Constants.States.SHARED_MODIFIED):
                 self.hit += 1
                 self.pubAccess += 1
                 self.cache.access(address)
@@ -82,8 +82,8 @@ class Dragon(CacheController):
                 self.hit += 1
                 self.cache.update_state(address, Constants.States.MODIFIED)
             # data is in SC or SM state
-            elif (self.cache.get_state(address) == Constants.States.SHARED_CLEAN or
-                    self.cache.get_state(address) == Constants.States.SHARED_MODIFIED):
+            elif (self.cache.get_state(address) == Constants.States.SHARED or
+                  self.cache.get_state(address) == Constants.States.SHARED_MODIFIED):
                 self.pubAccess += 1
                 self.hit += 1
                 self.busUpd(address)
@@ -104,19 +104,21 @@ class Dragon(CacheController):
             if self.cache.get_state(transaction.get_address()) == Constants.States.EXCLUSIVE:
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
-                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED_CLEAN)
+                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
                     # data is to be copied over to target cache
+                    self.can_provide_flag = True
                     return True
             # data is in SC state
-            elif self.cache.update_state(transaction.get_address()) == Constants.States.SHARED_CLEAN:
+            elif self.cache.update_state(transaction.get_address()) == Constants.States.SHARED:
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
-                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED_CLEAN)
+                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
                     # data is to be copied over to target cache
+                    self.can_provide_flag = True
                     return True
                 # transaction is BusUpd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusUpd:
-                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED_CLEAN)
+                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
                     # data does not need to be copied to target cache
                     return False
             # data is in SM state
@@ -124,14 +126,14 @@ class Dragon(CacheController):
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED_MODIFIED)
-                    self.can_provide = True
                     # data is to be copied over to target cache
+                    self.can_provide_flag = True
                     return True
                 # transaction is BusUpd
                 elif transaction.get_transaction() == Constants.TransactionTypes.BusUpd:
                     # immediate request to writeback
                     self.bus.writeback(transaction.get_address())
-                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED_CLEAN)
+                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
                     # data does not need to be copied to target cache
                     return False
             # data is in M state
@@ -139,7 +141,7 @@ class Dragon(CacheController):
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED_MODIFIED)
-                    self.can_provide = True
                     # data is to be copied over to target cache
+                    self.can_provide_flag = True
                     return True
 

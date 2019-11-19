@@ -16,11 +16,12 @@ class MESI(CacheController):
             
         else:
             unstall_state = Constants.States.MODIFIED
-            
-        index = self.cache.contains(self.unstall_address)
-            
-        if (index >= 0):
+
+        if self.cache.contains(self.unstall_address):
             self.cache.update_state(self.unstall_address, unstall_state)
+
+        else:
+            self.cache.add_to_cache(self.unstall_address, unstall_state)
         #else:
             #eviction necessary here
             
@@ -85,22 +86,24 @@ class MESI(CacheController):
     def snoop(self, transaction):
         # data is not present in cache
         if not self.cache.contains(transaction.get_address()):
+            #print("core", self.core.identifier, " does not have ", transaction.address, " for core", transaction.source.identifier)
             return False
 
         else:
+            #print("core", self.core.identifier, " has ", transaction.address, " for core", transaction.source.identifier, " state is ", self.cache.get_state(transaction.get_address()))
+
             # data is in M state
             if self.cache.get_state(transaction.get_address()) == Constants.States.MODIFIED:
                 # immediate request to writeback
-                self.bus.writeback(transaction.get_address())
+                #self.bus.writeback(transaction.get_address())
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
-                    self.can_provide = True
                 # transaction is BusRdX
                 elif transaction.get_transaction() == Constants.TransactionTypes.BusRdX:
                     self.cache.update_state(transaction.get_address(), Constants.States.INVALID)
-                    self.can_provide = True
                 # data is to be copied over to target cache
+                self.can_provide_flag = True
                 return True
             # data is in E state
             elif self.cache.get_state(transaction.get_address()) == Constants.States.EXCLUSIVE:
@@ -111,14 +114,19 @@ class MESI(CacheController):
                 elif transaction.get_transaction() == Constants.TransactionTypes.BusRdX:
                     self.cache.update_state(transaction.get_address(), Constants.States.INVALID)
                 # data is to be copied over to target cache
+                self.can_provide_flag = True
                 return True
             # data is in S state
-            elif self.cache.update_state(transaction.get_address()) == Constants.States.SHARED:
+            elif self.cache.get_state(transaction.get_address()) == Constants.States.SHARED:
+                # transaction is BusRd
+                if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
+                    self.can_provide_flag = True
+                    return True
                 # transaction is BusRdX
-                if transaction.get_transaction() == Constants.TransactionTypes.BusRdX:
+                elif transaction.get_transaction() == Constants.TransactionTypes.BusRdX:
                     self.cache.update_state(transaction.get_address(), Constants.States.INVALID)
-                # data does not need to be copied to target cache
-                return False
+                    # data does not need to be copied to target cache
+                    return False
             # data is in I state
             elif self.cache.update_state(transaction.get_address()) == Constants.States.INVALID:
                 return False
