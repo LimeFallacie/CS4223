@@ -23,9 +23,6 @@ class Bus:
     def get_invalidations(self):
         return self.invalidations
 
-    def add_to_cache(self, index, address, state):
-        self.controllers[index].add_to_cache(address, state)
-
     def add_transaction(self, transaction):
         self.transaction_list.append(transaction)
         

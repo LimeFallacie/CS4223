@@ -4,9 +4,10 @@ from cache import Constants
 
 
 class CacheBlock:
-    def __init__(self, tag, state):
+    def __init__(self, tag, state, dirty):
         self.tag = tag
         self.state = state
+        self.dirty = dirty
 
     def get_tag(self):
         return self.tag
@@ -20,6 +21,12 @@ class CacheBlock:
     def set_state(self, new_state):
         self.state = new_state
 
+    def is_dirty(self):
+        return self.dirty
+
+    def set_dirty(self):
+        self.dirty = True
+
 
 class CacheSet:
     def __init__(self, associativity):
@@ -30,7 +37,7 @@ class CacheSet:
         # sets
         for i in range(0, associativity):
             self.LRUindex.append(i)
-            self.cacheBlocks.append(CacheBlock(0, Constants.States.INVALID))
+            self.cacheBlocks.append(CacheBlock(0, Constants.States.INVALID, False))
 
     def contains(self, tag):
         for block in self.cacheBlocks:
@@ -40,11 +47,15 @@ class CacheSet:
 
     def add(self, cache_block):
         index = self.LRUindex.popleft()
-        self.cacheBlocks.pop(index)
+        block = self.cacheBlocks.pop(index)
         self.cacheBlocks.insert(index, cache_block)
         self.LRUindex.append(index)
+        if block.is_dirty():
+            return True
+        else:
+            return False
 
-    # prerequisite : data is found in cache set
+            # prerequisite : data is found in cache set
     def get_state(self, tag):
         for block in self.cacheBlocks:
             if block.get_tag() == tag:
@@ -67,6 +78,14 @@ class CacheSet:
             if block.get_tag() == tag:
                 index = self.get_LRU_index(block)
                 self.LRUindex.append(list(self.LRUindex).pop(index))
+
+    # prerequisite : data is found in cache set
+    def access_and_write(self, tag):
+        for block in self.cacheBlocks:
+            if block.get_tag() == tag:
+                index = self.get_LRU_index(block)
+                self.LRUindex.append(list(self.LRUindex).pop(index))
+                block.set_dirty()
 
 
 class Cache:
@@ -96,9 +115,9 @@ class Cache:
         addressStr = str(address)
         return int(addressStr[ : 32 - self.indexBits - self.offsetBits])
 
-    def add_to_cache(self, address, state):
+    def add_to_cache(self, address, state, dirty=False):
         cache_set = self.cacheSets[self.get_index(address)]
-        cache_set.add(CacheBlock(self.get_tag(address), state))
+        return cache_set.add(CacheBlock(self.get_tag(address), state, dirty))
 
     def contains(self, address):
         # print(address)
@@ -117,6 +136,10 @@ class Cache:
     def access(self, address):
         cache_set = self.cacheSets[self.get_index(address)]
         cache_set.access(self.get_tag(address))
+
+    def access_and_write(self, address):
+        cache_set = self.cacheSets[self.get_index(address)]
+        cache_set.access_and_write(self.get_tag(address))
 
     # debug
     def printCache(self):

@@ -10,18 +10,21 @@ class MESI(CacheController):
             return
         
         unstall_state = ""
-        
+        writeback = False
+        dirty = False
+
         if (self.unstall_action == "PrRd"):
             unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE 
             
         else:
             unstall_state = Constants.States.MODIFIED
+            dirty = True
 
         if self.cache.contains(self.unstall_address):
             self.cache.update_state(self.unstall_address, unstall_state)
 
         else:
-            self.cache.add_to_cache(self.unstall_address, unstall_state)
+            writeback = self.cache.add_to_cache(self.unstall_address, unstall_state, dirty)
         #else:
             #eviction necessary here
             
@@ -30,12 +33,13 @@ class MESI(CacheController):
         
         self.core.unstall()
         self.stalled = False
-        
-        
+
+        return writeback
 
     def prRd(self, address):
         self.unstall_address = address
-        # data is present in cache
+        self.unstall_action = "PrRd"
+    # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
             if (self.cache.get_state(address) == Constants.States.MODIFIED or
@@ -55,12 +59,12 @@ class MESI(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_action = "PrRd"
             self.busRd(address)
 
     def prWr(self, address):
         self.unstall_address = address
-        # data is present in cache
+        self.unstall_action = "PrWr"
+    # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
             if (self.cache.get_state(address) == Constants.States.MODIFIED or
@@ -80,7 +84,6 @@ class MESI(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_action = "PrWr"
             self.busRdX(address)
 
     def snoop(self, transaction):

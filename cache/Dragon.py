@@ -10,15 +10,19 @@ class Dragon(CacheController):
             self.stalled = False
             return
         unstall_state = ""
+        writeback = False
+        dirty = False
         
         if (self.unstall_action == "PrRdMiss"):
             unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE
             
         elif (self.unstall_action == "BusUpd"):
             unstall_state = Constants.States.SHARED_MODIFIED if shared else Constants.States.MODIFIED
+            dirty = True
             
         elif (self.unstall_action == "PrWrMiss") and shared:
             self.busUpd(self.unstall_address)
+            dirty = True
             return
         else:
             unstall_state = Constants.States.SHARED_MODIFIED
@@ -26,7 +30,7 @@ class Dragon(CacheController):
         if (self.cache.contains(self.unstall_address)):
             self.cache.update_state(self.unstall_address, unstall_state)
         else:
-            self.cache.add_to_cache(self.unstall_address, unstall_state)
+            writeback = self.cache.add_to_cache(self.unstall_address, unstall_state, dirty)
         #else:
             #eviction necessary here
             
@@ -36,9 +40,7 @@ class Dragon(CacheController):
         self.core.unstall()
         self.stalled = False
         
-        
-            
-            
+        return writeback
 
     def busUpd(self, address):
         self.core.stall()
