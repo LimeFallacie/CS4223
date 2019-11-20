@@ -110,12 +110,6 @@ class Dragon(CacheController):
                     return True
             # data is in SC state
             elif self.cache.get_state(transaction.get_address()) == Constants.States.SHARED:
-                # transaction is BusRd
-                if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
-                    self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
-                    # data is to be copied over to target cache
-                    self.can_provide_flag = True
-                    return True
                 # transaction is BusUpd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusUpd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
@@ -132,7 +126,6 @@ class Dragon(CacheController):
                 # transaction is BusUpd
                 elif transaction.get_transaction() == Constants.TransactionTypes.BusUpd:
                     # immediate request to writeback
-                    self.bus.writeback(transaction.get_address())
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
                     # data does not need to be copied to target cache
                     return False
