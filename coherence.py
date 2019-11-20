@@ -61,7 +61,6 @@ def main():
                 progress += 1  # once progress = 4 break
             else:
                 pass
-
         bus.nextTick()
         if progress == 4:
             completed = True

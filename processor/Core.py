@@ -1,4 +1,5 @@
 from cache import MESI, Dragon
+from collections import deque
 
 
 class Core:
@@ -8,7 +9,7 @@ class Core:
         self.completed = False
         self.stallCount = 0  # for counting stall cycles for instr execution
         self.instCount = 0  # counts total num instr already read
-        self.instrlist = []  # list of instr lines
+        self.instrlist = deque()  # list of instr lines
         self.dataread()
         self.identifier = identifier
         self.compute_cycles = 0
@@ -27,7 +28,8 @@ class Core:
     def dataread(self):
         data = open(self.inputFile, 'r')
         instrlist = data.readlines()
-        self.instrlist = instrlist
+        for line in instrlist:
+            self.instrlist.append(line)
 
     def stall(self):
         # print("Core running " + self.inputFile + " has been stalled\n")
@@ -41,7 +43,7 @@ class Core:
         self.exec_cycles += 1
         if not self.stalled and (self.stallCount == 0):
             self.instCount += 1
-            command = self.instrlist.pop(0).strip()  # pops the front of the list and removes lead/trailing whitespace
+            command = self.instrlist.popleft().strip()  # pops the front of the list and removes lead/trailing whitespace
             bin_command = bin(int(command[2:].strip(), 16))[2:].zfill(32)  # converts the hex string to binary
 
             print("id = " + str(self.identifier) + "\tprogress = " + str(self.instCount))
