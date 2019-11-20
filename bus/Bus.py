@@ -32,7 +32,11 @@ class Bus:
             return
         
         elif(self.source_core >= 0):
-            self.controllers[self.source_core].unstall(self.shared)
+            writeback = self.controllers[self.source_core].unstall(self.shared)
+            if (writeback):
+                self.wait_counter = Constants.BusConstants.MISS
+                self.data_traffic += self.block_size
+                
             self.shared = False
             self.source_core = -1
             return
@@ -76,6 +80,7 @@ class Bus:
                 self.wait_counter = Constants.BusConstants.MISS
             
             self.data_traffic += self.block_size
+            self.invalidations += 1
                 
         elif (transaction.get_transaction() == Constants.TransactionTypes.BusUpd):
             self.wait_counter = Constants.BusConstants.UPDATE
