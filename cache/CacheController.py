@@ -49,6 +49,12 @@ class CacheController(ABC):
     def get_miss(self):
         return self.miss
 
+    def get_priv_rate(self):
+        return 100 * self.privAccess / (self.pubAccess + self.privAccess)
+
+    def get_pub_rate(self):
+        return 100 * self.pubAccess / (self.pubAccess + self.privAccess)
+
     def busRd(self, address):
         self.core.stall()
         self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusRd, self.core, address))

@@ -66,6 +66,10 @@ def main():
             completed = True
 
     print("\n\n\n")
+
+    for i in range(4):
+        total_cycles = max(total_cycles, cores[i].exec_cycles)
+
     print("============RESULTS============\n")
     # script arguments parsed here [coherence “protocol” “input_file” “cache_size” “associativity” “block_size”]
     print("overall cycle count = %s" % total_cycles)
@@ -75,11 +79,12 @@ def main():
         print("cycle count for core %d = %s" % (i, cores[i-1].get_computeCycles()))
         print("load/store instruction count for core %d = %s" % (i, cores[i-1].get_LDSTR()))
         print("idle cycle count for core %d = %s" % (i, cores[i-1].idle_cycles))
-        print("data cache miss rate for core %d = %s%%" % (i, "PLACEHOLDER"))
+        print("data cache miss rate for core %d = %s%%" % (i, controllers[i-1].get_miss_rate()))
+        print("private data access distribution for core %d = %s%%" % (i, controllers[i-1].get_priv_rate()))
+        print("public data access distribution for core %d = %s%%" % (i, controllers[i - 1].get_pub_rate()))
     print("========================")
     print("bus data traffic in bytes = %s" % str(bus.get_data_traffic()))
     print("number of invalidation or update in bus = %s" % str(bus.get_invalidations()))
-    print("private data versus shared data access distribution = %s%%" % "PLACEHOLDER")
 
 
 if __name__ == '__main__':
