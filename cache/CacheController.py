@@ -22,9 +22,8 @@ class CacheController(ABC):
         self.stalled = True
         self.core.stall()
         
-    def unstall(self):
-        self.stalled = False
-        self.core.unstall()
+    def unstall(self, shared):
+        pass
         
     def can_provide(self):
         result = self.can_provide_flag
