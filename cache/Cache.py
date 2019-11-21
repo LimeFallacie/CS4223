@@ -63,10 +63,18 @@ class CacheSet:
         return Constants.States.INVALID
 
     # prerequisite : data is found in cache set
-    def update_state(self, tag, state):
+    def update_state(self, tag, state, dirty = False):
         for block in self.cacheBlocks:
             if block.get_tag() == tag:
                 block.set_state(state)  # update state
+                if dirty:
+                    block.set_dirty()
+
+    def update_dirty(self, tag):
+        for block in self.cacheBlocks:
+            if block.get_tag() == tag:
+                block.set_dirty()  # update dirty
+
 
     def get_LRU_index(self, cache_block):
         cache_index = self.cacheBlocks.index(cache_block)
@@ -129,9 +137,13 @@ class Cache:
         cache_set = self.cacheSets[self.get_index(address)]
         return cache_set.get_state(self.get_tag(address))
 
-    def update_state(self, address, state):
+    def update_state(self, address, state, dirty = False):
         cache_set = self.cacheSets[self.get_index(address)]
-        cache_set.update_state(self.get_tag(address), state)
+        cache_set.update_state(self.get_tag(address), state, dirty)
+
+    def update_dirty(self, address):
+        cache_set = self.cacheSets[self.get_index(address)]
+        cache_set.update_dirty(self.get_tag(address))
 
     def access(self, address):
         cache_set = self.cacheSets[self.get_index(address)]

@@ -13,7 +13,7 @@ class MESI(CacheController):
         writeback = False
         dirty = False
 
-        if (self.unstall_action == "PrRd"):
+        if self.unstall_action == "PrRd":
             unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE 
             
         else:
@@ -21,7 +21,7 @@ class MESI(CacheController):
             dirty = True
 
         if self.cache.contains(self.unstall_address):
-            self.cache.update_state(self.unstall_address, unstall_state)
+            self.cache.update_state(self.unstall_address, unstall_state, dirty)
 
         else:
             writeback = self.cache.add_to_cache(self.unstall_address, unstall_state, dirty)
@@ -39,7 +39,7 @@ class MESI(CacheController):
     def prRd(self, address):
         self.unstall_address = address
         self.unstall_action = "PrRd"
-    # data is present in cache
+        # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
             if (self.cache.get_state(address) == Constants.States.MODIFIED or
@@ -71,7 +71,7 @@ class MESI(CacheController):
                     self.cache.get_state(address) == Constants.States.EXCLUSIVE):
                 self.privAccess += 1
                 self.hit += 1
-                self.cache.update_state(address, Constants.States.MODIFIED)
+                self.cache.update_state(address, Constants.States.MODIFIED, True)
             # data is in S state
             elif self.cache.get_state(address) == Constants.States.SHARED:
                 self.pubAccess += 1

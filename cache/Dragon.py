@@ -27,8 +27,8 @@ class Dragon(CacheController):
         else:
             unstall_state = Constants.States.SHARED_MODIFIED
 
-        if (self.cache.contains(self.unstall_address)):
-            self.cache.update_state(self.unstall_address, unstall_state)
+        if self.cache.contains(self.unstall_address):
+            self.cache.update_state(self.unstall_address, unstall_state, dirty)
         else:
             writeback = self.cache.add_to_cache(self.unstall_address, unstall_state, dirty)
         #else:
@@ -78,12 +78,12 @@ class Dragon(CacheController):
             if self.cache.get_state(address) == Constants.States.MODIFIED:
                 self.privAccess += 1
                 self.hit += 1
-                self.cache.access(address)
+                self.cache.access_and_write(address)
             # data is in E state
             elif self.cache.get_state(address) == Constants.States.EXCLUSIVE:
                 self.privAccess += 1
                 self.hit += 1
-                self.cache.update_state(address, Constants.States.MODIFIED)
+                self.cache.update_state(address, Constants.States.MODIFIED, True)
             # data is in SC or SM state
             elif (self.cache.get_state(address) == Constants.States.SHARED or
                   self.cache.get_state(address) == Constants.States.SHARED_MODIFIED):

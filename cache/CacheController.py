@@ -41,7 +41,10 @@ class CacheController(ABC):
         return self.core.get_identifier()
 
     def get_miss_rate(self):
-        return 100 * self.miss / (self.hit+self.miss)
+        try:
+            return 100 * self.miss / (self.hit+self.miss)
+        except ZeroDivisionError:
+            return "divide by zero"
 
     def get_hit(self):
         return self.hit
@@ -50,10 +53,16 @@ class CacheController(ABC):
         return self.miss
 
     def get_priv_rate(self):
-        return 100 * self.privAccess / (self.pubAccess + self.privAccess)
+        try:
+            return 100 * self.privAccess / (self.pubAccess + self.privAccess)
+        except ZeroDivisionError:
+            return "divide by zero"
 
     def get_pub_rate(self):
-        return 100 * self.pubAccess / (self.pubAccess + self.privAccess)
+        try:
+            return 100 * self.pubAccess / (self.pubAccess + self.privAccess)
+        except ZeroDivisionError:
+            return "divide by zero"
 
     def busRd(self, address):
         self.core.stall()
