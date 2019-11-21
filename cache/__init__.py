@@ -5,3 +5,4 @@ from .Cache import Constants
 from .CacheController import CacheController
 from .MESI import MESI
 from .Dragon import Dragon
+from .MOESI import MOESI

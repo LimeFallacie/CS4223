@@ -13,14 +13,14 @@ class Dragon(CacheController):
         writeback = False
         dirty = False
         
-        if (self.unstall_action == "PrRdMiss"):
+        if (self.unstall_action == Constants.UnstallAction.PrRd):
             unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE
             
-        elif (self.unstall_action == "BusUpd"):
+        elif (self.unstall_action == Constants.UnstallAction.BusUpd):
             unstall_state = Constants.States.SHARED_MODIFIED if shared else Constants.States.MODIFIED
             dirty = True
             
-        elif (self.unstall_action == "PrWrMiss") and shared:
+        elif (self.unstall_action == Constants.UnstallAction.PrWr) and shared:
             self.busUpd(self.unstall_address)
             dirty = True
 
@@ -42,14 +42,7 @@ class Dragon(CacheController):
         
         return writeback
 
-    def busUpd(self, address):
-        self.core.stall()
-        self.unstall_address = address
-        self.unstall_action = "BusUpd"
-        self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusUpd, self.core, address))
-
     def prRd(self, address):
-        self.unstall_address = address
         # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
@@ -67,11 +60,9 @@ class Dragon(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_action = "PrRdMiss"
             self.busRd(address)
 
     def prWr(self, address):
-        self.unstall_address = address
         # data is present in cache
         if self.cache.contains(address):
             # data is in M state
@@ -93,7 +84,6 @@ class Dragon(CacheController):
         # data is not present in cache
         else:
             self.miss += 1
-            self.unstall_action = "PrWrMiss"
             self.busRd(address)
 
     def snoop(self, transaction):

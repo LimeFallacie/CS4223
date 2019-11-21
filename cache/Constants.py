@@ -16,3 +16,8 @@ class BusConstants:
     EVICTION = 99
     UPDATE = 1
     WORDSIZE = 4
+
+class UnstallAction:
+    PrRd = "PRRD"
+    PrWr = "PRWR"
+    BusUpd = "BUSUPD"

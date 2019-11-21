@@ -1,4 +1,4 @@
-from cache import MESI, Dragon
+from cache import MESI, Dragon, MOESI
 from collections import deque
 
 
@@ -20,6 +20,8 @@ class Core:
             self.controller = MESI(cache_size, associativity, block_size, self)
         elif protocol.lower() == 'dragon':
             self.controller = Dragon(cache_size, associativity, block_size, self)
+        elif protocol.upper() == 'MOESI':
+            self.controller = MOESI(cache_size, associativity, block_size, self)
             
     def get_identifier(self):
         return self.identifier

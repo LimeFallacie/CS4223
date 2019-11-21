@@ -65,12 +65,21 @@ class CacheController(ABC):
 
     def busRd(self, address):
         self.core.stall()
+        self.unstall_address = address
+        self.unstall_action = Constants.UnstallAction.PrRd
         self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusRd, self.core, address))
 
     def busRdX(self, address):
         self.core.stall()
+        self.unstall_address = address
+        self.unstall_action = Constants.UnstallAction.PrWr
         self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusRdX, self.core, address))
 
+    def busUpd(self, address):
+        self.core.stall()
+        self.unstall_address = address
+        self.unstall_action = Constants.UnstallAction.BusUpd
+        self.bus.add_transaction(Transaction(Constants.TransactionTypes.BusUpd, self.core, address))
     @abstractmethod
     def prRd(self, address):
         pass

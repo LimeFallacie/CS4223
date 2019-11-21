@@ -13,7 +13,7 @@ class MESI(CacheController):
         writeback = False
         dirty = False
 
-        if self.unstall_action == "PrRd":
+        if self.unstall_action == Constants.UnstallAction.PrRd:
             unstall_state = Constants.States.SHARED if shared else Constants.States.EXCLUSIVE 
             
         else:
@@ -37,8 +37,6 @@ class MESI(CacheController):
         return writeback
 
     def prRd(self, address):
-        self.unstall_address = address
-        self.unstall_action = "PrRd"
         # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
@@ -62,9 +60,7 @@ class MESI(CacheController):
             self.busRd(address)
 
     def prWr(self, address):
-        self.unstall_address = address
-        self.unstall_action = "PrWr"
-    # data is present in cache
+        # data is present in cache
         if self.cache.contains(address):
             # data is in M or E state
             if (self.cache.get_state(address) == Constants.States.MODIFIED or
@@ -97,8 +93,6 @@ class MESI(CacheController):
 
             # data is in M state
             if self.cache.get_state(transaction.get_address()) == Constants.States.MODIFIED:
-                # immediate request to writeback
-                #self.bus.writeback(transaction.get_address())
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
