@@ -26,6 +26,7 @@ class Dragon(CacheController):
 
         else:
             unstall_state = Constants.States.SHARED_MODIFIED
+            dirty = True
 
         if self.cache.contains(self.unstall_address):
             self.cache.update_state(self.unstall_address, unstall_state, dirty)
