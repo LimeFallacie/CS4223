@@ -1,6 +1,7 @@
 import sys, os
 from processor import Core
 from bus import Bus
+import time
 
 #constants
 DEFAULT_WORD_SIZE = 4;
@@ -10,6 +11,7 @@ DEFAULT_ASSOCIATIVITY = 2;
 
 
 def main():
+    t0 = time.time()
     if not (len(sys.argv) == 3 or len(sys.argv) == 6):
         sys.exit("wrong number of arguments: " + str(len(sys.argv)))
 
@@ -85,6 +87,8 @@ def main():
     print("========================")
     print("bus data traffic in bytes = %s" % str(bus.get_data_traffic()))
     print("number of invalidation or update in bus = %s" % str(bus.get_invalidations()))
+    t1 = time.time()
+    print("time taken = %d seconds" % (t1 - t0))
 
 
 if __name__ == '__main__':
