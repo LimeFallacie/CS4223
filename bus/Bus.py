@@ -1,4 +1,5 @@
 from cache import Constants
+from collections import deque
 
 class Bus:
     def __init__(self, controllers, block_size, block_update):
@@ -7,7 +8,7 @@ class Bus:
         for each in controllers:
             each.connect_bus(self)
         #init transaction queue
-        self.transaction_list = []
+        self.transaction_list = deque()
         self.block_size = block_size
         self.block_update = block_update
         self.shared = False
@@ -25,7 +26,11 @@ class Bus:
 
     def add_transaction(self, transaction):
         self.transaction_list.append(transaction)
-        
+
+    def force_writeback(self):
+        self.wait_counter += Constants.BusConstants.EVICTION
+        self.data_traffic += self.block_size
+
     def nextTick(self):
         if (self.wait_counter > 1):
             self.wait_counter -= 1
@@ -42,7 +47,7 @@ class Bus:
             return
         
         if len(self.transaction_list):
-            next_transaction = self.transaction_list.pop(0)
+            next_transaction = self.transaction_list.popleft()
             self.process(next_transaction)
         
     def process(self, transaction):

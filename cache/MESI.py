@@ -95,9 +95,11 @@ class MESI(CacheController):
             if self.cache.get_state(transaction.get_address()) == Constants.States.MODIFIED:
                 # transaction is BusRd
                 if transaction.get_transaction() == Constants.TransactionTypes.BusRd:
+                    self.bus.force_writeback()
                     self.cache.update_state(transaction.get_address(), Constants.States.SHARED)
                 # transaction is BusRdX
                 elif transaction.get_transaction() == Constants.TransactionTypes.BusRdX:
+                    self.bus.force_writeback()
                     self.cache.update_state(transaction.get_address(), Constants.States.INVALID)
                 # data is to be copied over to target cache
                 self.can_provide_flag = True
