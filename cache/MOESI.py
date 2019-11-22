@@ -95,6 +95,7 @@ class MOESI(CacheController):
                     self.cache.update_state(address, Constants.States.SHARED_MODIFIED)
                 # transaction is BusRdX
                 elif type == Constants.TransactionTypes.BusRdX:
+                    self.bus.force_writeback()
                     self.cache.update_state(address, Constants.States.INVALID)
                 # data can be obtained
                 self.can_provide_flag = True
@@ -118,6 +119,8 @@ class MOESI(CacheController):
                     pass
                 # BusRdX
                 elif type == Constants.TransactionTypes.BusRdX:
+                    if self.cache.get_state(address) == Constants.States.SHARED_MODIFIED:
+                        self.bus.force_writeback()
                     self.cache.update_state(address, Constants.States.INVALID)
                 # data can be obtained
                 self.can_provide_flag = True
